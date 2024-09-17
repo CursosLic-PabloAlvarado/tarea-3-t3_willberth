@@ -1,5 +1,5 @@
 /**
- * parse_filter.tpp
+ * parse_filter.h
  *
  * Copyright (C) 2023-2024  Pablo Alvarado
  * EL5805 Procesamiento Digital de Señales
@@ -35,8 +35,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PARSE_FILTER_TPP
-#define _PARSE_FILTER_TPP
+#ifndef _PARSE_FILTER_H
+#define _PARSE_FILTER_H
 
 #include <fstream>
 #include <iostream>

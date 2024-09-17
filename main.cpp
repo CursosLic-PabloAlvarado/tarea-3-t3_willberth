@@ -55,7 +55,7 @@
 #include "waitkey.h"
 #include "passthrough_client.h"
 
-#include "parse_filter.tpp"
+#include "parse_filter.h"
 
 namespace po=boost::program_options;
 
