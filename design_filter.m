@@ -78,12 +78,12 @@ SOS = tf2sos(B,A)
 save("./mat-files/cheby1_lp.mat", "SOS");
 
 #HighPass
-[B,A] = cheby1(Order, Ripple, Flp/(Fs/2), 'hp');
+[B,A] = cheby1(Order, Ripple, Flp/(Fs/2), 'high');
 SOS = tf2sos(B,A)
 save("./mat-files/cheby1_hp.mat", "SOS");
 
 #BandPass
-[B,A] = cheby1(Order, Ripple, [Flb/(Fs/2) Fub/(Fs/2)], 'bandpass');
+[B,A] = cheby1(Order, Ripple, [Flb/(Fs/2) Fub/(Fs/2)]);
 SOS = tf2sos(B,A)
 save("./mat-files/cheby1_bp.mat", "SOS");
 
@@ -94,22 +94,22 @@ save("./mat-files/cheby1_bs.mat", "SOS");
 
 # Chebyshev Type II
 #LowPass
-[B,A] = cheby2(Order, Ripple, Flp/(Fs/2), 'low');
+[B,A] = cheby2(Order, Atten, Flp/(Fs/2), 'low');
 SOS = tf2sos(B,A)
 save("./mat-files/cheby2_lp.mat", "SOS");
 
 #HighPass
-[B,A] = cheby2(Order, Ripple, Flp/(Fs/2), 'high');
+[B,A] = cheby2(Order, Atten, Flp/(Fs/2), 'high');
 SOS = tf2sos(B,A)
 save("./mat-files/cheby2_hp.mat", "SOS");
 
 #BandPass
-[B,A] = cheby2(Order, Ripple, [Flb/(Fs/2) Fub/(Fs/2)], 'bandpass');
+[B,A] = cheby2(Order, Atten, [Flb/(Fs/2) Fub/(Fs/2)]);
 SOS = tf2sos(B,A)
 save("./mat-files/cheby2_bp.mat", "SOS");
 
 #StopBand
-[B,A] = cheby2(Order, Ripple, [Flb/(Fs/2) Fub/(Fs/2)], 'stop');
+[B,A] = cheby2(Order, Atten, [Flb/(Fs/2) Fub/(Fs/2)], 'stop');
 SOS = tf2sos(B,A)
 save("./mat-files/cheby2_bs.mat", "SOS");
 
