@@ -35,14 +35,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "passthrough_client.h"
+#include "filter_client.h"
 
 #include <cstring>
 
-passthrough_client::passthrough_client() : jack::client(){
+filter_client::filter_client() : jack::client(),
+                                    pass_on(true),
+                                    client_buffer_size(1024),
+                                    sample_rate(48000),
+                                    sample_time(1/sample_rate),
+                                    buffer_size(sample_rate * 6)
+
+{
+
 }
 
-passthrough_client::~passthrough_client() = default;
+filter_client::~filter_client() = default;
+
+
+jack::client_state filter_client::init() {
+    jack::client_state init_state =  jack::client::init();
+    set_sample_rate(sample_rate);
+    set_buffer_size(client_buffer_size);
+    return init_state;
+}
+
   
 /**
  * The process callback for this JACK application is called in a
@@ -52,10 +69,29 @@ passthrough_client::~passthrough_client() = default;
  * port to its output port. It will exit when stopped by 
    * the user (e.g. using Ctrl-C on a unix-ish operating system)
    */
-bool passthrough_client::process(jack_nframes_t nframes,
+bool filter_client::process(jack_nframes_t nframes,
                                  const sample_t *const in,
                                  sample_t *const out) {
-  memcpy (out, in, sizeof(sample_t)*nframes);
+    const sample_t* startptr = in;          //Puntero al inicio del buffer de entrada
+    const sample_t* endptr=in+nframes;    //Puntero al final del buffer de entrada
+    sample_t* outptr=out;                 //Puntero al inicio del buffer de salida
+
+
+    // Modo passthrough
+    if (pass_on){
+        while(startptr!=endptr){
+
+            *outptr = *startptr * ganancia_actual;  //Multiplicar cada sample del frame por la ganancia
+
+            cb_in.push_front(*startptr);          // Hace push en el frente del buffer de entrada
+
+            cb_out.push_front(*outptr);           // Hace push en el frente del buffer de salida
+
+            outptr+=1;                              //Incrementar el puntero del sample de salida
+            startptr+=1;                            //Incrementar el puntero del sample de entrada
+        }
+    }
+
   return true;
 }
   

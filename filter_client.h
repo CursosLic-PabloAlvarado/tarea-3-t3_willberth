@@ -1,5 +1,5 @@
 /**
- * passthrough_client.cpp
+ * passthrough_client.h
  *
  * Copyright (C) 2023-2024  Pablo Alvarado
  * EL5805 Procesamiento Digital de Señales
@@ -35,27 +35,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "passthrough_client.h"
+#ifndef FILTER_CLIENT_H
+#define FILTER_CLIENT_H
 
-#include <cstring>
+#include <boost/circular_buffer.hpp>
+#include "jack_client.h"
 
-passthrough_client::passthrough_client() : jack::client(){
-}
 
-passthrough_client::~passthrough_client() = default;
-  
 /**
- * The process callback for this JACK application is called in a
- * special realtime thread once for each audio cycle.
+ * Jack client class
  *
- * This client does nothing more than copy data from its input
- * port to its output port. It will exit when stopped by 
-   * the user (e.g. using Ctrl-C on a unix-ish operating system)
-   */
-bool passthrough_client::process(jack_nframes_t nframes,
-                                 const sample_t *const in,
-                                 sample_t *const out) {
-  memcpy (out, in, sizeof(sample_t)*nframes);
-  return true;
-}
+ * This class wraps some basic jack functionality.
+ */
+class filter_client : public jack::client {
+    
+public:
+  // typedef jack::client::sample_t sample_t;
   
+  /**
+   * The default constructor performs some basic connections.
+   */
+ filter_client();
+ ~filter_client();
+
+ float ganancia_actual{};
+
+ boost::circular_buffer<sample_t> cb_in;
+ boost::circular_buffer<sample_t> cb_out;
+
+ bool pass_on;
+
+ typedef unsigned long size_t;
+
+ size_t client_buffer_size;
+ size_t sample_rate;
+ size_t sample_time;
+
+ size_t buffer_size;
+
+ jack::client_state init() override;
+
+
+  /**
+   * Passthrough functionality
+   */
+  virtual bool process(jack_nframes_t nframes,
+                       const sample_t *const in,
+                       sample_t *const out) override;
+};
+
+
+#endif
