@@ -1,3 +1,4 @@
+
 % Load filter matrices from .mat files and navigate between their Bode plots
 pkg load signal % Ensure the signal package is loaded
 
@@ -64,13 +65,13 @@ plot_bode(filters{current_index}, file_names{current_index});
 % Infinite loop to listen for user input to switch between filters
 printf('Press the left or right arrow keys (or "q" to quit) to switch between filters.\n');
 while true
-    user_input = input('Left (l), Right (r), or Quit (q): ', 's'); % Prompt user for input
+    user_input = input('Previous (p), Next (n), or Quit (q): ', 's'); % Prompt user for input
     
-    if strcmpi(user_input, 'l') % Left key (l)
+    if strcmpi(user_input, 'n') % next
         current_index = mod(current_index - 2, length(filters)) + 1;
         close all;
         plot_bode(filters{current_index}, file_names{current_index});
-    elseif strcmpi(user_input, 'r') % Right key (r)
+    elseif strcmpi(user_input, 'p') % previous
         current_index = mod(current_index, length(filters)) + 1;
         close all;
         plot_bode(filters{current_index}, file_names{current_index});
