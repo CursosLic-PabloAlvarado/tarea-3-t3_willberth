@@ -38,7 +38,6 @@
 #ifndef FILTER_CLIENT_H
 #define FILTER_CLIENT_H
 
-#include <boost/circular_buffer.hpp>
 #include "jack_client.h"
 
 
@@ -60,9 +59,6 @@ public:
 
  float ganancia_actual{};
 
- boost::circular_buffer<sample_t> cb_in;
- boost::circular_buffer<sample_t> cb_out;
-
  bool pass_on;
 
  typedef unsigned long size_t;
@@ -71,7 +67,6 @@ public:
  size_t sample_rate;
  size_t sample_time;
 
- size_t buffer_size;
 
  jack::client_state init() override;
 

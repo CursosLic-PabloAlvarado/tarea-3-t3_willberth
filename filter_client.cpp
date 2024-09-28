@@ -43,8 +43,7 @@ filter_client::filter_client() : jack::client(),
                                     pass_on(true),
                                     client_buffer_size(1024),
                                     sample_rate(48000),
-                                    sample_time(1/sample_rate),
-                                    buffer_size(sample_rate * 6)
+                                    sample_time(1/sample_rate)
 
 {
 
@@ -72,23 +71,15 @@ jack::client_state filter_client::init() {
 bool filter_client::process(jack_nframes_t nframes,
                                  const sample_t *const in,
                                  sample_t *const out) {
-    const sample_t* startptr = in;          //Puntero al inicio del buffer de entrada
-    const sample_t* endptr=in+nframes;    //Puntero al final del buffer de entrada
-    sample_t* outptr=out;                 //Puntero al inicio del buffer de salida
+    const sample_t* start_ptr = in;          //Puntero al inicio del buffer de entrada
+    const sample_t* end_ptr=in+nframes;    //Puntero al final del buffer de entrada
+    sample_t* out_ptr=out;                 //Puntero al inicio del buffer de salida
 
 
     // Modo passthrough
     if (pass_on){
-        while(startptr!=endptr){
-
-            *outptr = *startptr * ganancia_actual;  //Multiplicar cada sample del frame por la ganancia
-
-            cb_in.push_front(*startptr);          // Hace push en el frente del buffer de entrada
-
-            cb_out.push_front(*outptr);           // Hace push en el frente del buffer de salida
-
-            outptr+=1;                              //Incrementar el puntero del sample de salida
-            startptr+=1;                            //Incrementar el puntero del sample de entrada
+        while(start_ptr!=end_ptr){
+            *out_ptr++ = *start_ptr++ * ganancia_actual;  //Multiplicar cada sample del frame por la ganancia
         }
     }
 
