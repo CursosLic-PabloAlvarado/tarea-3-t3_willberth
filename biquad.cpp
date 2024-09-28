@@ -30,8 +30,12 @@ void biquad::process(jack_nframes_t& nframes,
 
     while(start_ptr!=end_ptr){
         // Se realiza la implementación del filtro por medio de las ecuaciones de diferencias
-        *out_ptr++ = *start_ptr++*_b0 + _w1;
-        _w1 = *start_ptr++*_b1 - *out_ptr++*_a1 + _w2;
-        _w2 = *start_ptr++*_b2 - *out_ptr++*_a2;
+        *out_ptr = *start_ptr*_b0 + _w1;
+        _w1 = *start_ptr*_b1 - *out_ptr*_a1 + _w2;
+        _w2 = *start_ptr*_b2 - *out_ptr*_a2;
+
+        // Se incrementan los punteros
+        *start_ptr++;
+        *out_ptr++;
     }
 }; 
