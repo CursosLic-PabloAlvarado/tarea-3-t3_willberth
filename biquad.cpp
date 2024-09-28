@@ -6,7 +6,7 @@ biquad::biquad(){
 biquad::~biquad(){
 };
 
-void biquad::set_coef(const std::vector<float>& coeff_vector){
+void biquad::set_coef(const std::vector<float> coeff_vector){
     // Estableciendo los valores de los coefficientes segun el vector indicado
     _b0 = coeff_vector[0];
     _b1 = coeff_vector[1];
@@ -19,9 +19,9 @@ void biquad::set_coef(const std::vector<float>& coeff_vector){
     _w2 = 0;
 };
 
-void biquad::process(jack_nframes_t& nframes, 
-            const jack::client::sample_t *const& in, 
-            jack::client::sample_t *const& out){
+void biquad::process(jack_nframes_t nframes, 
+            const jack::client::sample_t *const in, 
+            jack::client::sample_t *const out){
 
     const jack::client::sample_t* start_ptr = in;        //Puntero al inicio del buffer de entrada
     const jack::client::sample_t* end_ptr=in+nframes;    //Puntero al final del buffer de entrada

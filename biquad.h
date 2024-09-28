@@ -11,9 +11,9 @@ public:
 biquad();
 ~biquad();
 
-void set_coef(const std::vector<float>& coeff_vector);
+void set_coef(const std::vector<float> coeff_vector);
 
-void process(jack_nframes_t &nframes, const jack::client::sample_t *const& in, jack::client::sample_t *const& out);
+void process(jack_nframes_t nframes, const jack::client::sample_t *const in, jack::client::sample_t *const out);
 
 private:
 
