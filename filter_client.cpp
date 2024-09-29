@@ -42,6 +42,7 @@
 filter_client::filter_client() : jack::client(),
                                     pass_on(true),
                                     biquad_on(false),
+                                    cascade_on(false),
                                     client_buffer_size(1024),
                                     sample_rate(48000),
                                     sample_time(1/sample_rate)
@@ -60,6 +61,10 @@ jack::client_state filter_client::init() {
     return init_state;
 }
 
+void filter_client::set_cascade(const cascade& filter_cascade) {
+    _cascade_filter = filter_cascade;
+}
+
   
 /**
  * The process callback for this JACK application is called in a
@@ -72,11 +77,13 @@ jack::client_state filter_client::init() {
 bool filter_client::process(jack_nframes_t nframes,
                                  const sample_t *const in,
                                  sample_t *const out) {
-    
+
     if (pass_on){
       memcpy(out, in, sizeof(sample_t)*nframes);
     } else if (biquad_on){
       _custom_biquad.process(nframes, in, out);
+    } else if (cascade_on){
+      _cascade_filter.process(nframes, in, out);
     }
 
   return true;

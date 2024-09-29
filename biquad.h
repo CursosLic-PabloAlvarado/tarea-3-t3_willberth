@@ -28,8 +28,8 @@ float _a2;
 
 // Guardan valores intermedios y temporales
 // Utilizando metodo transpuesto
-float _w1;
-float _w2;
+double _w1;
+double _w2;
 
 };
 

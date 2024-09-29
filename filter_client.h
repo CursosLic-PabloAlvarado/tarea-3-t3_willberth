@@ -40,6 +40,7 @@
 
 #include "jack_client.h"
 #include "biquad.h"
+#include "cascade.h"
 
 
 /**
@@ -60,8 +61,9 @@ public:
 
  float ganancia_actual{};
 
- bool pass_on;
- bool biquad_on;
+  bool pass_on;
+  bool biquad_on;
+  bool cascade_on;
 
  typedef unsigned long size_t;
 
@@ -71,6 +73,8 @@ public:
 
 
  jack::client_state init() override;
+
+ void set_cascade(const cascade& filter_cascade);
 
 
   /**
@@ -83,6 +87,7 @@ public:
   private:
   
   biquad _custom_biquad;
+  cascade _cascade_filter;
 
   };
 
