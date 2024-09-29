@@ -50,7 +50,7 @@
 class filter_client : public jack::client {
     
 public:
-  // typedef jack::client::sample_t sample_t;
+  typedef jack::client::sample_t sample_t;
   
   /**
    * The default constructor performs some basic connections.
