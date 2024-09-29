@@ -39,6 +39,7 @@
 #define FILTER_CLIENT_H
 
 #include "jack_client.h"
+#include "biquad.h"
 
 
 /**
@@ -60,6 +61,7 @@ public:
  float ganancia_actual{};
 
  bool pass_on;
+ bool biquad_on;
 
  typedef unsigned long size_t;
 
@@ -77,7 +79,13 @@ public:
   virtual bool process(jack_nframes_t nframes,
                        const sample_t *const in,
                        sample_t *const out) override;
-};
+
+  private:
+  
+  biquad _custom_biquad;
+
+  };
+
 
 
 #endif

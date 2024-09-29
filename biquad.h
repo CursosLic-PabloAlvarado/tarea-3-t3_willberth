@@ -13,7 +13,9 @@ biquad();
 
 void set_coef(const std::vector<float> coeff_vector);
 
-void process(jack_nframes_t nframes, const jack::client::sample_t *const in, jack::client::sample_t *const out);
+typedef jack_default_audio_sample_t sample_t;
+
+void process(jack_nframes_t nframes, const sample_t * const in, sample_t *const out);
 
 private:
 

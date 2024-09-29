@@ -41,12 +41,13 @@
 
 filter_client::filter_client() : jack::client(),
                                     pass_on(true),
+                                    biquad_on(false),
                                     client_buffer_size(1024),
                                     sample_rate(48000),
                                     sample_time(1/sample_rate)
-
 {
-
+  std::vector<float> coeffs = {0.00686f, 0.00198f, 0.00686f, 1.0f, -1.8489f, 0.8666f};
+  _custom_biquad.set_coef(coeffs);
 }
 
 filter_client::~filter_client() = default;
@@ -71,16 +72,11 @@ jack::client_state filter_client::init() {
 bool filter_client::process(jack_nframes_t nframes,
                                  const sample_t *const in,
                                  sample_t *const out) {
-    const sample_t* start_ptr = in;          //Puntero al inicio del buffer de entrada
-    const sample_t* end_ptr=in+nframes;    //Puntero al final del buffer de entrada
-    sample_t* out_ptr=out;                 //Puntero al inicio del buffer de salida
-
-
-    // Modo passthrough
+    
     if (pass_on){
-        while(start_ptr!=end_ptr){
-            *out_ptr++ = *start_ptr++ * ganancia_actual;  //Multiplicar cada sample del frame por la ganancia
-        }
+      memcpy(out, in, sizeof(sample_t)*nframes);
+    } else if (biquad_on){
+      _custom_biquad.process(nframes, in, out);
     }
 
   return true;

@@ -156,6 +156,16 @@ int main (int argc, char *argv[])
           
           std::cout << "Repeat playing files" << std::endl;
         } break;
+        case 'b': {
+          std::cout << "Simple Biquad Filter" << std::endl;
+          client.pass_on = false;
+          client.biquad_on = true;
+        } break;
+        case 'p': {
+          std::cout << "Allpass Filter" << std::endl;
+          client.pass_on = true;
+          client.biquad_on = false;
+        } break;
         default: {
           if (key>32) {
             std::cout << "Key " << char(key) << " pressed" << std::endl;

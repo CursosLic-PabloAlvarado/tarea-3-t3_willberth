@@ -20,12 +20,12 @@ void biquad::set_coef(const std::vector<float> coeff_vector){
 };
 
 void biquad::process(jack_nframes_t nframes, 
-            const jack::client::sample_t *const in, 
-            jack::client::sample_t *const out){
+            const sample_t *const in, 
+            sample_t *const out){
 
-    const jack::client::sample_t* start_ptr = in;        //Puntero al inicio del buffer de entrada
-    const jack::client::sample_t* end_ptr=in+nframes;    //Puntero al final del buffer de entrada
-    jack::client::sample_t* out_ptr=out;                 //Puntero al inicio del buffer de salida
+    const sample_t* start_ptr = in;        //Puntero al inicio del buffer de entrada
+    const sample_t* end_ptr=in+nframes;    //Puntero al final del buffer de entrada
+    sample_t* out_ptr=out;                 //Puntero al inicio del buffer de salida
 
 
     while(start_ptr!=end_ptr){
@@ -35,7 +35,7 @@ void biquad::process(jack_nframes_t nframes,
         _w2 = *start_ptr*_b2 - *out_ptr*_a2;
 
         // Se incrementan los punteros
-        *start_ptr++;
-        *out_ptr++;
+        start_ptr+=1;
+        out_ptr+=1;
     }
 }; 
