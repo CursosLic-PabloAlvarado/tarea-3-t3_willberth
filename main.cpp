@@ -127,7 +127,7 @@ int main (int argc, char *argv[])
     }
 
     static cascade filter_cascade;
-    filter_cascade.set_coef(filter_coefs);
+    filter_cascade.set_cascade_coef(filter_coefs);
     client.set_cascade(filter_cascade);
     
     if (client.init() != jack::client_state::Running) {

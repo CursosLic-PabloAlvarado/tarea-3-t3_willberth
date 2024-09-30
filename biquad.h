@@ -20,18 +20,17 @@ void process(jack_nframes_t nframes, const sample_t * const in, sample_t *const 
 private:
 
 // Coeficientes del filtro
-double _b0;
-double _b1;
-double _b2;
-double _a1;
-double _a2;
+float _b0;
+float _b1;
+float _b2;
+float _a1;
+float _a2;
 
 // Guardan valores intermedios y temporales
 // Utilizando metodo transpuesto
-double _x1;
-double _x2;
-double _y1;
-double _y2;
+float _w1;
+float _w2;
+
 
 };
 
