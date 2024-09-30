@@ -21,6 +21,9 @@ void process(jack_nframes_t nframes, const sample_t * const in, sample_t *const 
 private:
 
 std::vector<biquad> _sos_filters;
+biquad _sos_filter_1;
+biquad _sos_filter_2;
+biquad _sos_filter_3;
 
 
 };

@@ -87,8 +87,10 @@ public:
   private:
   
   biquad _custom_biquad;
+  biquad _custom_biquad1;
+  biquad _custom_biquad2;
+  biquad _custom_biquad3;
   cascade _cascade_filter;
-
   };
 
 

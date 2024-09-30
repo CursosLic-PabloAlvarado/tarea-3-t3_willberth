@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
 
-        {
+        {   // 
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/builddir/tarea3",
-            "args": ["-c", "${workspaceFolder}/mat-files/butter_lp.mat"],
+            "args": ["-c", "${workspaceFolder}/mat-files/ellip_lp.mat", "-f", "${workspaceFolder}/test-sound/chirp.wav", "${workspaceFolder}/test-sound/chirp.wav", "${workspaceFolder}/test-sound/chirp.wav"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
