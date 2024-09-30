@@ -1,41 +1,40 @@
-
 #include "biquad.h"
 
-#include <csignal>
-#include <boost/program_options/errors.hpp>
+biquad::biquad(){
+};
 
-biquad::biquad() : sample_rate(48000), w_n(buffer_size) {
-}
+biquad::~biquad(){
+};
 
-biquad::~biquad() = default;
+void biquad::set_coef(const std::vector<float> coeff_vector){
+    // Estableciendo los valores de los coefficientes segun el vector indicado
+    _b0 = coeff_vector[0];
+    _b1 = coeff_vector[1];
+    _b2 = coeff_vector[2];
+    _a1 = coeff_vector[4];
+    _a2 = coeff_vector[5];
 
-void biquad::set_coefficients(const std::vector<float> *coefficients) {
-    if(coefficients->size() == 6) {
-        b0 = (*coefficients)[0];
-        b1 = (*coefficients)[1];
-        b2 = (*coefficients)[2];
-        a0 = 1.0;
-        a1 = (*coefficients)[4];
-        a2 = (*coefficients)[5];
+    // Inicializando estados en 0
+    _w1 = 0;
+    _w2 = 0;
+};
 
-    }else {
-        throw std::runtime_error("Got a coefficient row vector of unexpected length");
+void biquad::process(jack_nframes_t nframes, 
+            const sample_t *const in, 
+            sample_t *const out){
+
+    const sample_t* start_ptr = in;        //Puntero al inicio del buffer de entrada
+    const sample_t* end_ptr=in+nframes;    //Puntero al final del buffer de entrada
+    sample_t* out_ptr=out;                 //Puntero al inicio del buffer de salida
+
+    while(start_ptr!=end_ptr){
+        // Se realiza la implementación del filtro por medio de las ecuaciones de diferencias
+        *out_ptr = ((*start_ptr) * _b0) + _w1;
+        _w1 = ((*start_ptr) * _b1) - ((*out_ptr) * _a1) + _w2;
+        _w2 = ((*start_ptr) * _b2) - ((*out_ptr) * _a2);
+
+        // Se incrementan los punteros
+        start_ptr++;
+        out_ptr++;
     }
-}
-
-void biquad::process(jack_nframes_t nframes, const sample_t *const in, sample_t *const out) {
-    const sample_t* startptr = in;          //Puntero al inicio del buffer de entrada
-    const sample_t* endptr=in+nframes;    //Puntero al final del buffer de entrada
-    sample_t* outptr=out;                 //Puntero al inicio del buffer de salida
-
-    while (startptr != endptr) {
-        w_n.push_back( -a1*w_n.back() - a2 * *(w_n.rbegin() + 1) + *startptr );
-        *outptr = b0*w_n.back() + b1 * *(w_n.rbegin() + 1) + b2 * *(w_n.rbegin() + 2);
-        startptr++;
-        outptr++;
-    }
-}
-
-
-
-
+}; 

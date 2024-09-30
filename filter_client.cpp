@@ -41,13 +41,14 @@
 
 filter_client::filter_client() : jack::client(),
                                     pass_on(true),
+                                    biquad_on(false),
+                                    cascade_on(false),
                                     client_buffer_size(1024),
                                     sample_rate(48000),
-                                    sample_time(1/sample_rate),
-                                    buffer_size(sample_rate * 6)
-
+                                    sample_time(1/sample_rate)
 {
-
+  std::vector<float> coeffs = {0.00686f, 0.00198f, 0.00686f, 1.0f, -1.8489f, 0.8666f};
+  _custom_biquad.set_coef(coeffs);
 }
 
 filter_client::~filter_client() = default;
@@ -58,6 +59,10 @@ jack::client_state filter_client::init() {
     set_sample_rate(sample_rate);
     set_buffer_size(client_buffer_size);
     return init_state;
+}
+
+void filter_client::set_cascade(const cascade& filter_cascade) {
+    _cascade_filter = filter_cascade;
 }
 
   
@@ -72,24 +77,13 @@ jack::client_state filter_client::init() {
 bool filter_client::process(jack_nframes_t nframes,
                                  const sample_t *const in,
                                  sample_t *const out) {
-    const sample_t* startptr = in;          //Puntero al inicio del buffer de entrada
-    const sample_t* endptr=in+nframes;    //Puntero al final del buffer de entrada
-    sample_t* outptr=out;                 //Puntero al inicio del buffer de salida
 
-
-    // Modo passthrough
     if (pass_on){
-        while(startptr!=endptr){
-
-            *outptr = *startptr * ganancia_actual;  //Multiplicar cada sample del frame por la ganancia
-
-            cb_in.push_front(*startptr);          // Hace push en el frente del buffer de entrada
-
-            cb_out.push_front(*outptr);           // Hace push en el frente del buffer de salida
-
-            outptr+=1;                              //Incrementar el puntero del sample de salida
-            startptr+=1;                            //Incrementar el puntero del sample de entrada
-        }
+      memcpy(out, in, sizeof(sample_t)*nframes);
+    } else if (biquad_on){
+      _custom_biquad.process(nframes, in, out);
+    } else if (cascade_on){
+      _cascade_filter.process(nframes, in, out);
     }
 
   return true;

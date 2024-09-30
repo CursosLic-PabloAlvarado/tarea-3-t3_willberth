@@ -53,9 +53,12 @@
 #include <boost/program_options.hpp>
 
 #include "waitkey.h"
-#include "passthrough_client.h"
+#include "filter_client.h"
 
 #include "parse_filter.h"
+
+#include "biquad.h"
+#include "cascade.h"
 
 namespace po=boost::program_options;
 
@@ -77,9 +80,9 @@ int main (int argc, char *argv[])
 
   
   try {
-    static passthrough_client client;
-
     typedef jack::client::sample_t sample_t;
+
+    static filter_client client;
     
     // Filter coefficients
     std::string filter_file;
@@ -121,8 +124,11 @@ int main (int argc, char *argv[])
       filter_coefs = parse_filter<sample_t>(filter_file);
       std::cout << filter_coefs.size() << " 2nd order filter read from "
                 << filter_file;
+      static cascade filter_cascade;
+      filter_cascade.set_cascade_coef(filter_coefs);
+      client.set_cascade(filter_cascade);
     }
-    
+
     if (client.init() != jack::client_state::Running) {
       throw std::runtime_error("Could not initialize the JACK client");
     }
@@ -155,6 +161,24 @@ int main (int argc, char *argv[])
           }
           
           std::cout << "Repeat playing files" << std::endl;
+        } break;
+        case 'b': {
+          std::cout << "Simple Biquad Filter" << std::endl;
+          client.pass_on = false;
+          client.biquad_on = true;
+          client.cascade_on = false;
+        } break;
+        case 'p': {
+          std::cout << "Allpass Filter" << std::endl;
+          client.pass_on = true;
+          client.biquad_on = false;
+          client.cascade_on = false;
+        } break;
+        case 'c': {
+          std::cout << "Cascade Filter" << std::endl;
+          client.pass_on = false;
+          client.biquad_on = false;
+          client.cascade_on = true;
         } break;
         default: {
           if (key>32) {

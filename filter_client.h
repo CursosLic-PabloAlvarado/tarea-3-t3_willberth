@@ -38,8 +38,9 @@
 #ifndef FILTER_CLIENT_H
 #define FILTER_CLIENT_H
 
-#include <boost/circular_buffer.hpp>
 #include "jack_client.h"
+#include "biquad.h"
+#include "cascade.h"
 
 
 /**
@@ -60,10 +61,9 @@ public:
 
  float ganancia_actual{};
 
- boost::circular_buffer<sample_t> cb_in;
- boost::circular_buffer<sample_t> cb_out;
-
- bool pass_on;
+  bool pass_on;
+  bool biquad_on;
+  bool cascade_on;
 
  typedef unsigned long size_t;
 
@@ -71,9 +71,10 @@ public:
  size_t sample_rate;
  size_t sample_time;
 
- size_t buffer_size;
 
  jack::client_state init() override;
+
+ void set_cascade(const cascade& filter_cascade);
 
 
   /**
@@ -82,7 +83,13 @@ public:
   virtual bool process(jack_nframes_t nframes,
                        const sample_t *const in,
                        sample_t *const out) override;
-};
+
+  private:
+  
+  biquad _custom_biquad;
+  cascade _cascade_filter;
+  };
+
 
 
 #endif

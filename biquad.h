@@ -1,29 +1,39 @@
+#ifndef _BIQUAD_H
+#define _BIQUAD_H
 
-
-#ifndef BIQUAD_H
-#define BIQUAD_H
 #include <vector>
-#include <boost/circular_buffer.hpp>
-#include <jack/types.h>
+#include "jack_client.h"
 
 class biquad {
+
 public:
 
-    biquad();
-    ~biquad();
+biquad();
+~biquad();
 
-    float a0, a1, a2, b0, b1, b2;
-    unsigned long sample_rate;
-    unsigned long buffer_size = sample_rate * 6;
+void set_coef(const std::vector<float> coeff_vector);
 
-    typedef jack_default_audio_sample_t sample_t;
-    boost::circular_buffer<sample_t> w_n;
+typedef jack_default_audio_sample_t sample_t;
 
-    void set_coefficients(const std::vector<float> *coefficients);
-    void process(jack_nframes_t nframes, const sample_t * const in, sample_t *const out);
+void process(jack_nframes_t nframes, const sample_t * const in, sample_t *const out);
+
+private:
+
+// Coeficientes del filtro
+float _b0;
+float _b1;
+float _b2;
+float _a1;
+float _a2;
+
+// Guardan valores intermedios y temporales
+// Utilizando metodo transpuesto
+float _w1;
+float _w2;
+
 
 };
 
 
 
-#endif //BIQUAD_H
+#endif
