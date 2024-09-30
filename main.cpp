@@ -124,12 +124,11 @@ int main (int argc, char *argv[])
       filter_coefs = parse_filter<sample_t>(filter_file);
       std::cout << filter_coefs.size() << " 2nd order filter read from "
                 << filter_file;
+      static cascade filter_cascade;
+      filter_cascade.set_cascade_coef(filter_coefs);
+      client.set_cascade(filter_cascade);
     }
 
-    static cascade filter_cascade;
-    filter_cascade.set_cascade_coef(filter_coefs);
-    client.set_cascade(filter_cascade);
-    
     if (client.init() != jack::client_state::Running) {
       throw std::runtime_error("Could not initialize the JACK client");
     }
