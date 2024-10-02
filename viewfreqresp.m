@@ -47,11 +47,17 @@ semilogx(x_axis,H_dB,"Linewidth",3);
 
 #Configuración de los ejes y títulos del primer plot
 
+set(gca, 'GridLineStyle', '-', 'GridColor', [0 0 0], 'GridAlpha', 0.5, 'LineWidth', 1);
+set(gca, 'MinorGridLineStyle', '-', 'MinorGridColor', [0 0 0], 'MinorGridAlpha', 0.2);
+
 xlim([1 w(end)*(Fs/(2*pi))]);
 ylim([-100,5]);
 title("Respuesta en magnitud del filtro: ")
 xlabel('Frecuencia (Hz)');
 ylabel('Magnitud (dB)');
+
+grid on;
+grid minor;
 
 # Segundo plot de la fase
 subplot(2, 1, 2);
@@ -59,18 +65,24 @@ semilogx(x_axis,H_ph,"Linewidth",3);
 
 #Configuración de los ejes y tíulos del segundo plot
 
+set(gca, 'GridLineStyle', '-', 'GridColor', [0 0 0], 'GridAlpha', 0.5, 'LineWidth', 1);
+set(gca, 'MinorGridLineStyle', '-', 'MinorGridColor', [0 0 0], 'MinorGridAlpha', 0.2);
+
 xlim([1,x_axis(columns(w.*(Fs/(2*pi))))]);
 ylim([-360,0]);
 title("Respuesta en fase del filtro: ")
 xlabel('Frecuencia (Hz)');
-ylabel('Fase (rad)');
+ylabel('Fase (°)');
 
-grid on
+grid on;
+grid minor;
 
 figure(2);
 
 zplane(B,A);
-title("Diagrama de polos y ceros del filtro")
+title("Diagrama de polos y ceros del filtro");
+
+set(gca, 'GridLineStyle', '-', 'GridColor', [0 0 0], 'GridAlpha', 0.5, 'LineWidth', 1);
 
 grid on;
 
