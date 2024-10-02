@@ -25,5 +25,3 @@ executable('tarea3', app_sources, dependencies: all_deps)
 # Benchmark executable (give it a unique name)
 executable('bench', benchmark_sources, dependencies: [benchmark_dep] + all_deps)
 
-# Optionally, you can define a test to run the benchmark executable
-test('benchmark', executable('tarea3_bench'))
