@@ -84,6 +84,9 @@ title("Diagrama de polos y ceros del filtro");
 
 set(gca, 'GridLineStyle', '-', 'GridColor', [0 0 0], 'GridAlpha', 0.5, 'LineWidth', 1);
 
+xlabel('Re\{z\}');
+ylabel('Im\{z\}');
+
 grid on;
 
 
