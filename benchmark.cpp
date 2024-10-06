@@ -38,6 +38,7 @@
 #include <cstdlib>
 #include <biquad.h>
 #include <cascade.h>
+#include <parallel_simd.h>
 #include <benchmark/benchmark.h>
 
 /**
@@ -96,6 +97,32 @@ static void BM_Cascade_Process(benchmark::State& state) {
 }
 
 // Vary array size from 8 to 8192
-BENCHMARK(BM_Cascade_Process)->RangeMultiplier(2)->Range(256, 8<<10); 
+BENCHMARK(BM_Cascade_Process)->RangeMultiplier(2)->Range(256, 8<<10);
+
+static void BM_SIMD_Process(benchmark::State& state) {
+    parallel_simd dut;
+    dut.set_cascade_coef(std::vector< std::vector<float> >{
+        {0.88489099304085195,-1.7647259369167299,0.88489099279944872,
+         1,-1.9447696737414277,0.96118976527688038},
+        {1, -1.9962282681026606, 1.0000000006886136,
+         1,-1.9902746344470237,0.99111829673050256},
+        {1,-1.9975106328926273,0.99999999958419417,
+         1,-1.8137023593689499,0.81712922359906082}
+      });
+    int size = state.range(0);
+
+    float input[size];
+    float output[size];
+
+    for (auto _ : state) {
+        dut.process(size, input, output);
+    }
+
+    state.SetItemsProcessed(size);  // Optional: Report number of items processed
+    state.SetComplexityN(size);     // Optional: Analyze time complexity
+}
+
+// Vary array size from 8 to 8192
+BENCHMARK(BM_SIMD_Process)->RangeMultiplier(2)->Range(256, 8<<10);
 
 BENCHMARK_MAIN(); 
