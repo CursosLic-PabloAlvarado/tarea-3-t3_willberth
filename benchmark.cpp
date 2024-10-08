@@ -38,7 +38,7 @@
 #include <cstdlib>
 #include <biquad.h>
 #include <cascade.h>
-#include <parallel_simd.h>
+#include <parallel_simd_df2.h>
 #include <benchmark/benchmark.h>
 
 /**

@@ -20,10 +20,10 @@ add_project_arguments(optimization_flags, language: ['cpp'])
 # Sources for the main application (without benchmark.cpp)
 app_sources = files('main.cpp', 'jack_client.cpp', 'passthrough_client.cpp',
                     'sndfile_thread.cpp', 'waitkey.cpp', 'filter_client.cpp',
-                    'biquad.cpp', 'cascade.cpp', 'parallel_simd.cpp')
+                    'biquad.cpp', 'cascade.cpp', 'parallel_simd_df2.cpp')
 
 # Sources for the benchmark executable
-benchmark_sources = files('benchmark.cpp', 'biquad.cpp', 'cascade.cpp', 'parallel_simd.cpp')
+benchmark_sources = files('benchmark.cpp', 'biquad.cpp', 'cascade.cpp', 'parallel_simd_df2.cpp')
 
 # Main application executable
 executable('tarea3', app_sources, dependencies: all_deps)

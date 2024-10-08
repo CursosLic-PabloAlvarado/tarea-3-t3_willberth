@@ -6,7 +6,7 @@
 #include "immintrin.h" //AVX2, 256 bit operations (8 floats)
 #include "jack_client.h"
 
-class parallel_simd {
+class parallel_simd_df2 {
 
 public:
 
@@ -37,8 +37,8 @@ public:
         float b2_fxx[4];
     };
 
-    parallel_simd();
-    ~parallel_simd();
+    parallel_simd_df2();
+    ~parallel_simd_df2();
 
     void set_cascade_coef(const std::vector<std::vector<float>>& filter_coefs);
 
