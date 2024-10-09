@@ -38,6 +38,8 @@
 #ifndef FILTER_CLIENT_H
 #define FILTER_CLIENT_H
 
+#include <parallel_simd_df2.h>
+
 #include "jack_client.h"
 #include "biquad.h"
 #include "cascade.h"
@@ -64,6 +66,8 @@ public:
   bool pass_on;
   bool biquad_on;
   bool cascade_on;
+  bool parallel_on;
+  bool test;
 
  typedef unsigned long size_t;
 
@@ -71,10 +75,16 @@ public:
  size_t sample_rate;
  size_t sample_time;
 
+ float impulse_resp[1026];
+
 
  jack::client_state init() override;
 
  void set_cascade(const cascade& filter_cascade);
+
+ void impulse_response();
+
+ void passtrough();
 
 
   /**
@@ -88,6 +98,8 @@ public:
   
   biquad _custom_biquad;
   cascade _cascade_filter;
+  parallel_simd_df2 _parallel_simd_df2;
+
   };
 
 

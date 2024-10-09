@@ -1,6 +1,6 @@
 
-#ifndef PARALLEL_SIMD_H
-#define PARALLEL_SIMD_H
+#ifndef PARALLEL_SIMD_DF2_H
+#define PARALLEL_SIMD_DF2_H
 
 #include "nmmintrin.h" //SSE4.2, 128 bit operations (4 floats)
 #include "immintrin.h" //AVX2, 256 bit operations (8 floats)
@@ -37,10 +37,12 @@ public:
         float b2_fxx[4];
     };
 
+    float k_x;
+
     parallel_simd_df2();
     ~parallel_simd_df2();
 
-    void set_cascade_coef(const std::vector<std::vector<float>>& filter_coefs);
+    void set_cascade_coef(const std::vector<std::vector<float>>& filter_coefs, const float k);
 
     void process(jack_nframes_t nframes, const sample_t * const in, sample_t *const out);
 
@@ -56,4 +58,4 @@ private:
 
 
 
-#endif //PARALLEL_SIMD_H
+#endif //PARALLEL_SIMD_DF2_H

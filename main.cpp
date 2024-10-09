@@ -45,6 +45,8 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <fstream>
+#include <boost/filesystem.hpp>
 #include <filesystem>
 #include <vector>
 
@@ -74,6 +76,25 @@ void signal_handler(int signal) {
   }
 }
 
+void saveArrayToCSV(const std::string& filename, const float* array, std::size_t size) {
+  std::ofstream file(filename);
+
+  // Check if the file opened successfully
+  if (!file.is_open()) {
+    std::cerr << "Failed to open file: " << filename << std::endl;
+    return;
+  }
+
+  // Write index and array value to the file
+  for (std::size_t i = 0; i < size; ++i) {
+    file << i << "," << array[i] << "\n";
+  }
+
+  file.close();  // Close the file when done
+
+  std::cout << "Array saved to " << filename << std::endl;
+}
+
 int main (int argc, char *argv[])
 {
   std::signal(SIGINT,signal_handler);
@@ -86,6 +107,7 @@ int main (int argc, char *argv[])
     
     // Filter coefficients
     std::string filter_file;
+    std::string csv_path;
     std::vector< std::vector< sample_t > > filter_coefs;
     
     // Parse options from the command line
@@ -98,7 +120,9 @@ int main (int argc, char *argv[])
        "List of audio files to be played")
       ("coeffs,c",
        po::value<std::string>(&filter_file),
-       "File with filter coefficients (from GNU/Octave)");
+       "File with filter coefficients (from GNU/Octave)")
+      ("csvname,n", po::value<std::string>(&csv_path),
+        "Name to save csv impulse response file as");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc,argv,desc),vm);
@@ -167,19 +191,37 @@ int main (int argc, char *argv[])
           client.pass_on = false;
           client.biquad_on = true;
           client.cascade_on = false;
+          client.parallel_on = false;
         } break;
         case 'p': {
           std::cout << "Allpass Filter" << std::endl;
           client.pass_on = true;
           client.biquad_on = false;
           client.cascade_on = false;
+          client.parallel_on = false;
         } break;
         case 'c': {
           std::cout << "Cascade Filter" << std::endl;
           client.pass_on = false;
           client.biquad_on = false;
           client.cascade_on = true;
+          client.parallel_on = false;
         } break;
+        case 's': {
+          std::cout << "Parallel Filter" << std::endl;
+          client.pass_on = false;
+          client.biquad_on = false;
+          client.cascade_on = false;
+          client.parallel_on = true;
+          } break;
+          case 't' : {
+            client.passtrough();
+            client.impulse_response();
+            constexpr std::size_t size = sizeof(client.impulse_resp) / sizeof(client.impulse_resp[0]);
+            if(csv_path.empty()) {
+              saveArrayToCSV("impresp.csv", client.impulse_resp, size);
+            }
+          }
         default: {
           if (key>32) {
             std::cout << "Key " << char(key) << " pressed" << std::endl;

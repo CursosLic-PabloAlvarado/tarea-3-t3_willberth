@@ -43,6 +43,7 @@ filter_client::filter_client() : jack::client(),
                                     pass_on(true),
                                     biquad_on(false),
                                     cascade_on(false),
+                                    parallel_on(false),
                                     client_buffer_size(1024),
                                     sample_rate(48000),
                                     sample_time(1/sample_rate)
@@ -60,6 +61,21 @@ jack::client_state filter_client::init() {
     set_buffer_size(client_buffer_size);
     return init_state;
 }
+
+void filter_client::passtrough() {
+  cascade_on = false;
+  parallel_on = false;
+  biquad_on = false;
+  pass_on = true;
+}
+
+void filter_client::impulse_response() {
+  static float input[1026] = {1};
+  _parallel_simd_df2.process(1026, input, impulse_resp);
+}
+
+
+
 
 void filter_client::set_cascade(const cascade& filter_cascade) {
     _cascade_filter = filter_cascade;
@@ -84,6 +100,8 @@ bool filter_client::process(jack_nframes_t nframes,
       _custom_biquad.process(nframes, in, out);
     } else if (cascade_on){
       _cascade_filter.process(nframes, in, out);
+    }else if (parallel_on) {
+      _parallel_simd_df2.process(nframes, in, out);
     }
 
   return true;

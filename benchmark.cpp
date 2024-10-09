@@ -39,6 +39,7 @@
 #include <biquad.h>
 #include <cascade.h>
 #include <parallel_simd_df2.h>
+#include <parallel_simd_tdf2.h>
 #include <benchmark/benchmark.h>
 
 /**
@@ -99,8 +100,38 @@ static void BM_Cascade_Process(benchmark::State& state) {
 // Vary array size from 8 to 8192
 BENCHMARK(BM_Cascade_Process)->RangeMultiplier(2)->Range(256, 8<<10);
 
-static void BM_SIMD_Process(benchmark::State& state) {
-    parallel_simd dut;
+static void BM_SIMD_DF2_Process(benchmark::State& state) {
+    const float k = 0.0001;
+    parallel_simd_df2 dut;
+    dut.set_cascade_coef(std::vector<std::vector<float>>{
+      // First biquad coefficients
+      {0.0, -0.0195213, 0.0193573, 1.0, -1.9792, 0.9801},   // [b0, b1, b2, 1, a1, a2]
+
+      // Second biquad coefficients
+      {0.0, -0.0566642, 0.0601341, 1.0, -1.9066, 0.9213},      // [b0, b1, b2, 1, a1, a2]
+
+      // Third biquad coefficients
+      {0.0, 0.0767639, -0.0769582, 1.0, -1.8992, 0.9028}       // [b0, b1, b2, 1, a1, a2]
+  }, k);
+
+    int size = state.range(0);
+
+    float input[size];
+    float output[size];
+
+    for (auto _ : state) {
+        dut.process(size, input, output);
+    }
+
+    state.SetItemsProcessed(size);  // Optional: Report number of items processed
+    state.SetComplexityN(size);     // Optional: Analyze time complexity
+}
+
+// Vary array size from 8 to 8192
+BENCHMARK(BM_SIMD_DF2_Process)->RangeMultiplier(2)->Range(256, 8<<10);
+
+static void BM_SIMD_TDF2_Process(benchmark::State& state) {
+    parallel_simd_tdf2 dut;
     dut.set_cascade_coef(std::vector< std::vector<float> >{
         {0.88489099304085195,-1.7647259369167299,0.88489099279944872,
          1,-1.9447696737414277,0.96118976527688038},
@@ -123,6 +154,6 @@ static void BM_SIMD_Process(benchmark::State& state) {
 }
 
 // Vary array size from 8 to 8192
-BENCHMARK(BM_SIMD_Process)->RangeMultiplier(2)->Range(256, 8<<10);
+BENCHMARK(BM_SIMD_TDF2_Process)->RangeMultiplier(2)->Range(256, 8<<10);
 
 BENCHMARK_MAIN(); 

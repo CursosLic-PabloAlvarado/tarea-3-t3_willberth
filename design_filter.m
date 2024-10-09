@@ -59,13 +59,12 @@ save("./mat-files/butter_lp.mat", "SOS");
 # Highpass
 [B,A] = butter(Order,Flp/(Fs/2),'high');
 SOS = tf2sos(B,A);
-[r, p, k] = residuez(B,A)
 save("./mat-files/butter_hp.mat", "SOS");
 
 # Bandpass
 [B,A] = butter(Order,[Flb/(Fs/2) Fub/(Fs/2)],'bandpass');
-SOS = tf2sos(B,A);
-[r, p, k] = residuez(B,A)
+[z, p, k] = butter(Order,[Flb/(Fs/2) Fub/(Fs/2)],'bandpass');
+SOS = zp2sos(z, p, k)
 save("./mat-files/butter_bp.mat", "SOS");
 
 # Bandstop
@@ -116,3 +115,4 @@ SOS = tf2sos(B,A);
 save("./mat-files/cheby2_bs.mat", "SOS");
 
 
+pause();
